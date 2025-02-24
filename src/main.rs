@@ -1,48 +1,22 @@
-use std::collections::HashMap;
+mod index;
+mod storage;
 
-struct Database {
-    storage: HashMap<String, String>,
-}
-
-impl Database {
-    fn new() -> Self {
-        Database {
-            storage: HashMap::new(),
-        }
-    }
-
-    fn insert(&mut self, key: String, value: String) {
-        self.storage.insert(key, value);
-    }
-
-    fn get(&self, key: &str) -> Option<&String> {
-        self.storage.get(key)
-    }
-
-    fn delete(&mut self, key: &str) -> Option<String> {
-        self.storage.remove(key)
-    }
-}
+use index::NoSQLDB;
 
 fn main() {
-    let mut db = Database::new();
+    let mut db = NoSQLDB::new("database.txt");
 
-    db.insert("name".to_string(), "Godson".to_string());
-    db.insert("age".to_string(), "20".to_string());
-    db.insert("country".to_string(), "Nigeria".to_string());
-    db.insert("city".to_string(), "Lagos".to_string());
+    db.insert("user:1".to_string(), "{ \"name\": \"Alice\", \"age\": \"25\" }".to_string());
 
-    if let Some(name) = db.get("name") {
-        println!("Name: {}", name);
-    } else {
-        println!("Name not found");
+    match db.get("user:1") {
+        Some(data) => println!("Found: {}", data),
+        None => println!("Not found"),
     }
 
-    db.delete("city");
+    db.delete("user:1");
 
-    if let Some(city) = db.get("city") {
-        println!("City: {}", city);
-    } else {
-        println!("City not found");
+    match db.get("user:1") {
+        Some(data) => println!("Found: {}", data),
+        None => println!("Not found"),
     }
 }
